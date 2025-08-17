@@ -14,7 +14,7 @@ export default async function DashboardPage() {
     redirect("/")
   }
 
-  const userEmails = await db
+  const userEmails = await db()
     .select({
       id: emails.id,
       subject: emails.subject,
@@ -30,7 +30,7 @@ export default async function DashboardPage() {
     .groupBy(emails.id)
     .orderBy(desc(emails.sentAt))
 
-  const lastOpenEvents = await db
+  const lastOpenEvents = await db()
     .select({
       emailId: openEvents.emailId,
       ts: openEvents.ts,
