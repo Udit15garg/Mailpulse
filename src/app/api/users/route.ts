@@ -12,7 +12,7 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const allUsers = await db.select().from(users)
+    const allUsers = await db().select().from(users)
     return NextResponse.json({ users: allUsers })
   } catch (error) {
     console.error("Error fetching users:", error)
@@ -34,7 +34,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "Name is required" }, { status: 400 })
     }
 
-    const updatedUser = await db
+    const updatedUser = await db()
       .update(users)
       .set({ name })
       .where(eq(users.id, session.user.id))

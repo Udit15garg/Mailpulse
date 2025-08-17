@@ -24,7 +24,7 @@ export async function GET(
     
     const { uaFamily, device } = parseUserAgent(userAgent)
 
-    const [email] = await db
+    const [email] = await db()
       .select()
       .from(emails)
       .where(eq(emails.pixelToken, token))
@@ -42,7 +42,7 @@ export async function GET(
       })
     }
 
-    await db.insert(openEvents).values({
+    await db().insert(openEvents).values({
       emailId: email.id,
       ip,
       uaFamily,
@@ -50,7 +50,7 @@ export async function GET(
     })
 
     if (email.status === "sent") {
-      await db
+      await db()
         .update(emails)
         .set({ status: "opened" })
         .where(eq(emails.id, email.id))
