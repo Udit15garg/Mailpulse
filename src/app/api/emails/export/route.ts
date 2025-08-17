@@ -42,7 +42,7 @@ export async function GET() {
       ...email,
       lastOpened: lastOpenEvents
         .filter(event => event.emailId === email.id)
-        .sort((a, b) => new Date(b.ts).getTime() - new Date(a.ts).getTime())[0]?.ts || null
+        .sort((a, b) => new Date(b.ts!).getTime() - new Date(a.ts!).getTime())[0]?.ts || null
     }))
 
     const csvHeaders = [
