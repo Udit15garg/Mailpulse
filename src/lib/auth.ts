@@ -2,7 +2,13 @@ import NextAuth from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 import { DrizzleAdapter } from "@auth/drizzle-adapter"
 import { db } from "./db"
-import type { Adapter } from "next-auth/adapters"
+import type { 
+  Adapter, 
+  AdapterUser, 
+  AdapterAccount, 
+  AdapterSession, 
+  VerificationToken 
+} from "next-auth/adapters"
 
 // Create a lazy adapter that only initializes the database when methods are called
 function createLazyDrizzleAdapter(): Adapter {
@@ -17,20 +23,20 @@ function createLazyDrizzleAdapter(): Adapter {
 
   // Return an adapter interface that delegates to the real adapter at runtime
   return {
-    createUser: (user) => getAdapter().createUser(user),
-    getUser: (id) => getAdapter().getUser(id),
-    getUserByEmail: (email) => getAdapter().getUserByEmail(email),
-    getUserByAccount: (account) => getAdapter().getUserByAccount(account),
-    updateUser: (user) => getAdapter().updateUser(user),
-    deleteUser: (userId) => getAdapter().deleteUser?.(userId),
-    linkAccount: (account) => getAdapter().linkAccount(account),
-    unlinkAccount: (account) => getAdapter().unlinkAccount?.(account),
-    createSession: (session) => getAdapter().createSession(session),
-    getSessionAndUser: (sessionToken) => getAdapter().getSessionAndUser(sessionToken),
-    updateSession: (session) => getAdapter().updateSession(session),
-    deleteSession: (sessionToken) => getAdapter().deleteSession(sessionToken),
-    createVerificationToken: (token) => getAdapter().createVerificationToken?.(token),
-    useVerificationToken: (token) => getAdapter().useVerificationToken?.(token),
+    createUser: (user: Omit<AdapterUser, "id">) => getAdapter().createUser(user),
+    getUser: (id: string) => getAdapter().getUser(id),
+    getUserByEmail: (email: string) => getAdapter().getUserByEmail(email),
+    getUserByAccount: (account: Pick<AdapterAccount, "providerAccountId" | "provider">) => getAdapter().getUserByAccount(account),
+    updateUser: (user: Partial<AdapterUser> & Pick<AdapterUser, "id">) => getAdapter().updateUser(user),
+    deleteUser: (userId: string) => getAdapter().deleteUser?.(userId),
+    linkAccount: (account: AdapterAccount) => getAdapter().linkAccount(account),
+    unlinkAccount: (account: Pick<AdapterAccount, "providerAccountId" | "provider">) => getAdapter().unlinkAccount?.(account),
+    createSession: (session: { sessionToken: string; userId: string; expires: Date }) => getAdapter().createSession(session),
+    getSessionAndUser: (sessionToken: string) => getAdapter().getSessionAndUser(sessionToken),
+    updateSession: (session: Partial<AdapterSession> & Pick<AdapterSession, "sessionToken">) => getAdapter().updateSession(session),
+    deleteSession: (sessionToken: string) => getAdapter().deleteSession(sessionToken),
+    createVerificationToken: (token: VerificationToken) => getAdapter().createVerificationToken?.(token),
+    useVerificationToken: (params: { identifier: string; token: string }) => getAdapter().useVerificationToken?.(params),
   }
 }
 
