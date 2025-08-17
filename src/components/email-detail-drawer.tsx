@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 
@@ -33,13 +33,7 @@ export function EmailDetailDrawer({ email, open, onClose }: EmailDetailDrawerPro
   const [openEvents, setOpenEvents] = useState<OpenEvent[]>([])
   const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
-    if (open && email.id) {
-      fetchOpenEvents()
-    }
-  }, [open, email.id])
-
-  const fetchOpenEvents = async () => {
+  const fetchOpenEvents = useCallback(async () => {
     setLoading(true)
     try {
       const response = await fetch(`/api/emails/${email.id}/opens`)
@@ -52,7 +46,13 @@ export function EmailDetailDrawer({ email, open, onClose }: EmailDetailDrawerPro
     } finally {
       setLoading(false)
     }
-  }
+  }, [email.id])
+
+  useEffect(() => {
+    if (open && email.id) {
+      fetchOpenEvents()
+    }
+  }, [open, email.id, fetchOpenEvents])
 
   const formatDate = (date: Date | string) => {
     return new Date(date).toLocaleString("en-US", {
