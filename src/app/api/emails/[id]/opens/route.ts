@@ -22,7 +22,7 @@ export async function GET(
       return NextResponse.json({ error: "Invalid email ID" }, { status: 400 })
     }
 
-    const email = await db
+    const email = await db()
       .select()
       .from(emails)
       .where(and(eq(emails.id, emailId), eq(emails.userId, session.user.id)))
@@ -32,7 +32,7 @@ export async function GET(
       return NextResponse.json({ error: "Email not found" }, { status: 404 })
     }
 
-    const opens = await db
+    const opens = await db()
       .select()
       .from(openEvents)
       .where(eq(openEvents.emailId, emailId))

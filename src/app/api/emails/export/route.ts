@@ -12,7 +12,7 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const userEmails = await db
+    const userEmails = await db()
       .select({
         id: emails.id,
         subject: emails.subject,
@@ -28,7 +28,7 @@ export async function GET() {
       .groupBy(emails.id)
       .orderBy(desc(emails.sentAt))
 
-    const lastOpenEvents = await db
+    const lastOpenEvents = await db()
       .select({
         emailId: openEvents.emailId,
         ts: openEvents.ts,

@@ -4,7 +4,7 @@ import { db } from "@/lib/db"
 export async function GET() {
   try {
     // Test database connection
-    await db.execute("SELECT 1")
+    await db().execute("SELECT 1")
     
     return NextResponse.json({
       status: "healthy",

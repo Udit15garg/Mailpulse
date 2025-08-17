@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     const pixelToken = generatePixelToken()
     const toHash = hashEmail(to)
     
-    const [emailRecord] = await db
+    const [emailRecord] = await db()
       .insert(emails)
       .values({
         userId: session.user.id,
