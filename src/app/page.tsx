@@ -3,8 +3,18 @@ import { redirect } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic'
+
 export default async function HomePage() {
-  const session = await auth()
+  let session = null
+  
+  try {
+    session = await auth()
+  } catch (error) {
+    console.error("Auth error on home page:", error)
+    // Continue rendering home page if auth fails
+  }
 
   if (session) {
     redirect("/dashboard")
