@@ -12,10 +12,11 @@ const TRANSPARENT_GIF = Buffer.from(
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { token: string } }
+  { params }: { params: Promise<{ token: string }> }
 ) {
   try {
-    const token = params.token.replace(".gif", "")
+    const resolvedParams = await params
+    const token = resolvedParams.token.replace(".gif", "")
     const userAgent = request.headers.get("user-agent") || ""
     const ip = request.headers.get("x-forwarded-for") || 
                request.headers.get("x-real-ip") || 

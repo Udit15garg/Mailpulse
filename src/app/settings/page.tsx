@@ -131,7 +131,7 @@ export default async function SettingsPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-sm font-medium text-gray-900">Auto-Label</h3>
-                  <p className="text-sm text-gray-600">Automatically apply "Tracked" label to sent emails</p>
+                  <p className="text-sm text-gray-600">Automatically apply &quot;Tracked&quot; label to sent emails</p>
                 </div>
                 <Badge variant="secondary">Coming Soon</Badge>
               </div>
