@@ -11,7 +11,7 @@ function createDb() {
       throw new Error("DATABASE_URL environment variable is not set")
     }
     // For build time or missing env, return a mock that won't try to connect
-    return null as ReturnType<typeof drizzle>
+    return null as unknown as ReturnType<typeof drizzle>
   }
   
   const sql = neon(process.env.DATABASE_URL)
