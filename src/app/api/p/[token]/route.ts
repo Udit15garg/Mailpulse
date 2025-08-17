@@ -5,6 +5,8 @@ import { eq } from "drizzle-orm"
 import { parseUserAgent } from "@/lib/utils"
 import { checkAlertRules } from "@/lib/alerts"
 
+export const runtime = 'nodejs'
+
 const TRANSPARENT_GIF = Buffer.from(
   "R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7",
   "base64"

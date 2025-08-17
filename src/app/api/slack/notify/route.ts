@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { sendSlackNotification, sendSlackAlert } from "@/lib/slack"
 
+export const runtime = 'nodejs'
+
 export async function POST(request: NextRequest) {
   try {
     const session = await auth()

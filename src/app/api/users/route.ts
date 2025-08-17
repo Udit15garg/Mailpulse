@@ -4,6 +4,8 @@ import { db } from "@/lib/db"
 import { users } from "@/lib/schema"
 import { eq } from "drizzle-orm"
 
+export const runtime = 'nodejs'
+
 export async function GET() {
   try {
     const session = await auth()

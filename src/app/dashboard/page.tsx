@@ -7,38 +7,67 @@ import { EmailsTable } from "@/components/emails-table"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
+// Force dynamic rendering for protected route
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+export const runtime = 'nodejs'
+
 export default async function DashboardPage() {
-  const session = await auth()
+  let session = null
+  let userEmails: Array<{
+    id: number
+    subject: string | null
+    toHash: string | null
+    sentAt: Date | null
+    status: string | null
+    messageId: string | null
+    openCount: number
+  }> = []
+  let lastOpenEvents: Array<{
+    emailId: number
+    ts: Date | null
+  }> = []
 
-  if (!session?.user?.id) {
-    redirect("/")
+  try {
+    session = await auth()
+
+    if (!session?.user?.id) {
+      redirect("/")
+    }
+
+    userEmails = await db()
+      .select({
+        id: emails.id,
+        subject: emails.subject,
+        toHash: emails.toHash,
+        sentAt: emails.sentAt,
+        status: emails.status,
+        messageId: emails.messageId,
+        openCount: count(openEvents.id),
+      })
+      .from(emails)
+      .leftJoin(openEvents, eq(emails.id, openEvents.emailId))
+      .where(eq(emails.userId, session.user.id))
+      .groupBy(emails.id)
+      .orderBy(desc(emails.sentAt))
+
+    lastOpenEvents = await db()
+      .select({
+        emailId: openEvents.emailId,
+        ts: openEvents.ts,
+      })
+      .from(openEvents)
+      .innerJoin(emails, eq(emails.id, openEvents.emailId))
+      .where(eq(emails.userId, session.user.id))
+      .orderBy(desc(openEvents.ts))
+  } catch (error) {
+    console.error("Dashboard error:", error)
+    // If not authenticated, redirect to home
+    if (!session?.user?.id) {
+      redirect("/")
+    }
+    // If DB error, show empty state
   }
-
-  const userEmails = await db()
-    .select({
-      id: emails.id,
-      subject: emails.subject,
-      toHash: emails.toHash,
-      sentAt: emails.sentAt,
-      status: emails.status,
-      messageId: emails.messageId,
-      openCount: count(openEvents.id),
-    })
-    .from(emails)
-    .leftJoin(openEvents, eq(emails.id, openEvents.emailId))
-    .where(eq(emails.userId, session.user.id))
-    .groupBy(emails.id)
-    .orderBy(desc(emails.sentAt))
-
-  const lastOpenEvents = await db()
-    .select({
-      emailId: openEvents.emailId,
-      ts: openEvents.ts,
-    })
-    .from(openEvents)
-    .innerJoin(emails, eq(emails.id, openEvents.emailId))
-    .where(eq(emails.userId, session.user.id))
-    .orderBy(desc(openEvents.ts))
 
   const emailsWithLastOpen = userEmails.map(email => ({
     ...email,

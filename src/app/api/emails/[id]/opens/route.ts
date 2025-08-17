@@ -4,6 +4,8 @@ import { db } from "@/lib/db"
 import { emails, openEvents } from "@/lib/schema"
 import { eq, and, desc } from "drizzle-orm"
 
+export const runtime = 'nodejs'
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }

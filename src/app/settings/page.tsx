@@ -4,6 +4,10 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 
+// Force dynamic rendering for protected route
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function SettingsPage() {
   const session = await auth()
 

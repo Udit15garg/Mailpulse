@@ -4,6 +4,8 @@ import { db } from "@/lib/db"
 import { emails } from "@/lib/schema"
 import { generatePixelToken, hashEmail } from "@/lib/utils"
 
+export const runtime = 'nodejs'
+
 export async function POST(request: NextRequest) {
   try {
     const session = await auth()

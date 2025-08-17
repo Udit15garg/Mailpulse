@@ -1,4 +1,3 @@
-import NextAuth from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 import { getServerSession } from "next-auth/next"
 import type { NextAuthOptions } from "next-auth"
