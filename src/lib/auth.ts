@@ -1,7 +1,20 @@
 import NextAuth from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
+import { getServerSession } from "next-auth/next"
+import type { NextAuthOptions } from "next-auth"
 
-const config = NextAuth({
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string
+      name?: string | null
+      email?: string | null
+      image?: string | null
+    }
+  }
+}
+
+export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -11,7 +24,7 @@ const config = NextAuth({
   callbacks: {
     session({ session, token }) {
       if (session.user && token.sub) {
-        (session.user as { id?: string }).id = token.sub
+        session.user.id = token.sub
       }
       return session
     },
@@ -22,6 +35,7 @@ const config = NextAuth({
       return token
     },
   },
-})
+}
 
-export const { handlers, auth, signIn, signOut } = config
+// Helper function for v4 compatibility
+export const auth = () => getServerSession(authOptions)
