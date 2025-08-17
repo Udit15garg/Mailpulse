@@ -2,9 +2,10 @@ import NextAuth from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 import { DrizzleAdapter } from "@auth/drizzle-adapter"
 import { db } from "./db"
+import type { Adapter } from "next-auth/adapters"
 
 // Create a lazy adapter that only initializes the database when methods are called
-function createLazyDrizzleAdapter() {
+function createLazyDrizzleAdapter(): Adapter {
   let adapter: ReturnType<typeof DrizzleAdapter> | null = null
   
   const getAdapter = () => {
@@ -16,25 +17,25 @@ function createLazyDrizzleAdapter() {
 
   // Return an adapter interface that delegates to the real adapter at runtime
   return {
-    createUser: (...args: any[]) => getAdapter().createUser(...args),
-    getUser: (...args: any[]) => getAdapter().getUser(...args),
-    getUserByEmail: (...args: any[]) => getAdapter().getUserByEmail(...args),
-    getUserByAccount: (...args: any[]) => getAdapter().getUserByAccount(...args),
-    updateUser: (...args: any[]) => getAdapter().updateUser(...args),
-    deleteUser: (...args: any[]) => getAdapter().deleteUser(...args),
-    linkAccount: (...args: any[]) => getAdapter().linkAccount(...args),
-    unlinkAccount: (...args: any[]) => getAdapter().unlinkAccount(...args),
-    createSession: (...args: any[]) => getAdapter().createSession(...args),
-    getSessionAndUser: (...args: any[]) => getAdapter().getSessionAndUser(...args),
-    updateSession: (...args: any[]) => getAdapter().updateSession(...args),
-    deleteSession: (...args: any[]) => getAdapter().deleteSession(...args),
-    createVerificationToken: (...args: any[]) => getAdapter().createVerificationToken(...args),
-    useVerificationToken: (...args: any[]) => getAdapter().useVerificationToken(...args),
+    createUser: (user) => getAdapter().createUser(user),
+    getUser: (id) => getAdapter().getUser(id),
+    getUserByEmail: (email) => getAdapter().getUserByEmail(email),
+    getUserByAccount: (account) => getAdapter().getUserByAccount(account),
+    updateUser: (user) => getAdapter().updateUser(user),
+    deleteUser: (userId) => getAdapter().deleteUser?.(userId),
+    linkAccount: (account) => getAdapter().linkAccount(account),
+    unlinkAccount: (account) => getAdapter().unlinkAccount?.(account),
+    createSession: (session) => getAdapter().createSession(session),
+    getSessionAndUser: (sessionToken) => getAdapter().getSessionAndUser(sessionToken),
+    updateSession: (session) => getAdapter().updateSession(session),
+    deleteSession: (sessionToken) => getAdapter().deleteSession(sessionToken),
+    createVerificationToken: (token) => getAdapter().createVerificationToken?.(token),
+    useVerificationToken: (token) => getAdapter().useVerificationToken?.(token),
   }
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: createLazyDrizzleAdapter() as any,
+  adapter: createLazyDrizzleAdapter(),
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
