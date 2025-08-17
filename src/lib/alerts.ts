@@ -74,10 +74,10 @@ export async function checkAlertRules(emailId: number) {
   }
 }
 
-export async function getAlertSettings(userId: string) {
+export async function getAlertSettings(_userId: string) {
   return DEFAULT_ALERT_RULES
 }
 
-export async function updateAlertSettings(userId: string, rules: AlertRule[]) {
+export async function updateAlertSettings(_userId: string, rules: AlertRule[]) {
   return rules
 }
