@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   
   connectBtn.addEventListener('click', () => {
-    chrome.tabs.create({ url: 'http://localhost:3000/dashboard' })
+    chrome.tabs.create({ url: 'https://mailpulse-mauve.vercel.app/dashboard' })
     showStatus('Opening MailPulse dashboard...')
   })
   
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
   })
   
   settingsBtn.addEventListener('click', () => {
-    chrome.tabs.create({ url: 'http://localhost:3000/dashboard' })
+    chrome.tabs.create({ url: 'https://mailpulse-mauve.vercel.app/settings' })
   })
   
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {

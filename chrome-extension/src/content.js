@@ -145,7 +145,7 @@ async function handleTrackedEmail(sendButton) {
   }
   
   try {
-    const response = await fetch('http://localhost:3000/api/track/send', {
+    const response = await fetch('https://mailpulse-mauve.vercel.app/api/track/send', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
