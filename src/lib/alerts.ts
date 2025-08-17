@@ -17,7 +17,7 @@ const DEFAULT_ALERT_RULES: AlertRule[] = [
 
 export async function checkAlertRules(emailId: number) {
   try {
-    const email = await db
+    const email = await db()
       .select()
       .from(emails)
       .where(eq(emails.id, emailId))
@@ -26,7 +26,7 @@ export async function checkAlertRules(emailId: number) {
 
     if (!email) return
 
-    const openCount = await db
+    const openCount = await db()
       .select()
       .from(openEvents)
       .where(eq(openEvents.emailId, emailId))
@@ -47,7 +47,7 @@ export async function checkAlertRules(emailId: number) {
       if (rule.type === "multiple_opens" && rule.threshold && rule.timeWindow) {
         const timeThreshold = new Date(Date.now() - rule.timeWindow * 60 * 1000)
         
-        const recentOpens = await db
+        const recentOpens = await db()
           .select()
           .from(openEvents)
           .where(
