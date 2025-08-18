@@ -65,33 +65,32 @@ export async function POST() {
     await sql`
       CREATE TABLE IF NOT EXISTS "emails" (
         "id" serial PRIMARY KEY NOT NULL,
-        "userId" text NOT NULL,
+        "user_id" varchar(64) NOT NULL,
         "subject" text,
-        "toHash" text,
-        "sentAt" timestamp DEFAULT now(),
-        "messageId" text,
-        "pixelToken" text UNIQUE,
-        "status" text DEFAULT 'sent',
-        FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE
+        "to_hash" varchar(128),
+        "sent_at" timestamp with time zone,
+        "message_id" varchar(256),
+        "pixel_token" varchar(64) NOT NULL,
+        "status" varchar(24) DEFAULT 'sent'
       )
     `
     
     await sql`
       CREATE TABLE IF NOT EXISTS "open_events" (
         "id" serial PRIMARY KEY NOT NULL,
-        "emailId" integer NOT NULL,
-        "ts" timestamp DEFAULT now(),
-        "ip" text,
-        "uaFamily" text,
-        "device" text,
-        FOREIGN KEY ("emailId") REFERENCES "emails"("id") ON DELETE CASCADE
+        "email_id" integer NOT NULL,
+        "ts" timestamp with time zone DEFAULT now(),
+        "ip" varchar(64),
+        "ua_family" varchar(64),
+        "device" varchar(64),
+        FOREIGN KEY ("email_id") REFERENCES "emails"("id") ON DELETE CASCADE
       )
     `
 
     // Create indexes for better performance
-    await sql`CREATE INDEX IF NOT EXISTS "idx_emails_userId" ON "emails"("userId")`
-    await sql`CREATE INDEX IF NOT EXISTS "idx_emails_pixelToken" ON "emails"("pixelToken")`
-    await sql`CREATE INDEX IF NOT EXISTS "idx_open_events_emailId" ON "open_events"("emailId")`
+    await sql`CREATE INDEX IF NOT EXISTS "idx_emails_user_id" ON "emails"("user_id")`
+    await sql`CREATE INDEX IF NOT EXISTS "idx_emails_pixel_token" ON "emails"("pixel_token")`
+    await sql`CREATE INDEX IF NOT EXISTS "idx_open_events_email_id" ON "open_events"("email_id")`
     await sql`CREATE INDEX IF NOT EXISTS "idx_account_userId" ON "account"("userId")`
     await sql`CREATE INDEX IF NOT EXISTS "idx_session_userId" ON "session"("userId")`
 
