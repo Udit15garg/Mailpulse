@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   const connectBtn = document.getElementById('connect-btn')
   const syncBtn = document.getElementById('sync-btn')
-  const settingsBtn = document.getElementById('settings-btn')
   const status = document.getElementById('status')
   
   function showStatus(message, type = 'success') {
@@ -32,9 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   })
   
-  settingsBtn.addEventListener('click', () => {
-    chrome.tabs.create({ url: 'https://mailpulse-mauve.vercel.app/settings' })
-  })
   
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     const currentTab = tabs[0]
