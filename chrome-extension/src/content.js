@@ -74,6 +74,12 @@ function createTrackingToggle() {
 function injectTrackingToggle() {
   const composeToolbar = document.querySelector('[role="toolbar"]')
   const composeFooter = document.querySelector('.btC .dC')
+  const composeWindow = document.querySelector('[role="dialog"]')
+  
+  if (!composeWindow) {
+    console.log('No compose window found')
+    return
+  }
   
   const targetContainer = composeToolbar || composeFooter
   
@@ -86,7 +92,9 @@ function injectTrackingToggle() {
       targetContainer.insertBefore(toggle, targetContainer.firstChild)
     }
     
-    console.log('MailPulse tracking toggle injected')
+    console.log('✅ MailPulse tracking toggle injected successfully')
+  } else {
+    console.log('❌ No suitable container found for toggle injection')
   }
 }
 
@@ -145,6 +153,8 @@ async function handleTrackedEmail(sendButton) {
   }
   
   try {
+    console.log('🔄 Creating tracking pixel...', { subject, recipient })
+    
     const response = await fetch('https://mailpulse-mauve.vercel.app/api/track/public', {
       method: 'POST',
       headers: {
@@ -157,11 +167,16 @@ async function handleTrackedEmail(sendButton) {
       })
     })
     
+    console.log('📡 API Response status:', response.status)
+    
     if (!response.ok) {
-      throw new Error('Failed to create tracking pixel')
+      const errorText = await response.text()
+      console.error('❌ API Error:', errorText)
+      throw new Error(`API returned ${response.status}: ${errorText}`)
     }
     
     const data = await response.json()
+    console.log('✅ Tracking data received:', data)
     
     if (composeBody && data.pixelUrl) {
       const pixelImg = `<img src="${data.pixelUrl}" width="1" height="1" style="display: none;" alt="">`
@@ -169,14 +184,15 @@ async function handleTrackedEmail(sendButton) {
       const currentHTML = composeBody.innerHTML
       composeBody.innerHTML = currentHTML + pixelImg
       
-      console.log('MailPulse tracking pixel injected')
+      console.log('✅ MailPulse tracking pixel injected:', data.pixelUrl)
+      alert('✅ Email tracking enabled!')
     }
     
     sendButton.click()
     
   } catch (error) {
-    console.error('MailPulse API error:', error)
-    alert('Failed to enable tracking. Email will be sent without tracking.')
+    console.error('❌ MailPulse API error:', error)
+    alert('❌ Failed to enable tracking. Email will be sent without tracking.')
     sendButton.click()
   }
 }
